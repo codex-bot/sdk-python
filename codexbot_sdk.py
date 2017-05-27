@@ -4,7 +4,6 @@ from .lib.db import Db
 from .lib.logging import Logging
 from .components.broker import Broker
 from .lib.server import Server, http_response
-from .config import SERVER
 
 
 class CodexBot:
@@ -21,6 +20,9 @@ class CodexBot:
         if not token:
             print('Please, pass your app`s token.\nYou can get it from our bot by /newapp command')
             exit()
+
+        self.host = host
+        self.port = port
 
         # Get event loop
         self.event_loop = asyncio.get_event_loop()
@@ -39,7 +41,7 @@ class CodexBot:
         return Logging()
 
     def init_server(self):
-        return Server(self.event_loop, SERVER['host'], SERVER['port'])
+        return Server(self.event_loop, self.host, self.port)
 
     def init_broker(self, application_name, queue_name):
         return Broker(self, self.event_loop, application_name, queue_name)
