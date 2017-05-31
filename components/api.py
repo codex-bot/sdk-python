@@ -18,7 +18,8 @@ class API:
         # Methods list (command => processor)
         self.methods = {
             'show message': self.show_message,
-            'service callback': self.service_callback
+            'service callback': self.service_callback,
+            'user answer': self.user_answer
         }
 
     async def process(self, message_data):
@@ -44,6 +45,9 @@ class API:
             commands_to_send.append((cmd, desc))
         await self.send('register commands', commands_to_send)
 
+    async def wait_user_answer(self, user, chat, prompt=''):
+        await self.send('wait user answer', {'user': user, 'chat': chat, 'prompt': prompt})
+
     # API COMMANDS
 
     def show_message(self, data):
@@ -51,3 +55,6 @@ class API:
 
     async def service_callback(self, data):
         await self.commands_list[data['command']](data)
+
+    async def user_answer(self, data):
+        await self.broker.core.user_answer_callback(data)
