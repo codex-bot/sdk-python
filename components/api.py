@@ -54,7 +54,8 @@ class API:
         await self.commands_list[data['command']](data)
 
     async def user_answer(self, data):
-        await self.broker.core.user_answer_callback(data)
+        if self.broker.core.user_answer_callback:
+            await self.broker.core.user_answer_callback(data)
 
     async def wait_user_answer(self, user, chat, prompt=''):
         await self.send('wait user answer', {'user': user, 'chat': chat, 'prompt': prompt})
