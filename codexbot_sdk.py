@@ -11,10 +11,9 @@ class CodexBot:
     # Make decorator for HTTP callback public
     http_response = http_response
 
-    def __init__(self, application_name, queue_name, host, port, db_config, token):
+    def __init__(self, application_name, host, port, db_config, token):
         """
         Initiates SDK
-        :param queue_name: - name of queue that this tool delegates to core
         """
 
         if not token:
@@ -23,6 +22,8 @@ class CodexBot:
 
         self.host = host
         self.port = port
+
+        queue_name = application_name
 
         # Get event loop
         self.event_loop = asyncio.get_event_loop()
