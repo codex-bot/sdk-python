@@ -45,9 +45,6 @@ class API:
             commands_to_send.append((cmd, desc))
         await self.send('register commands', commands_to_send)
 
-    async def wait_user_answer(self, user, chat, prompt=''):
-        await self.send('wait user answer', {'user': user, 'chat': chat, 'prompt': prompt})
-
     # API COMMANDS
 
     def show_message(self, data):
@@ -58,3 +55,6 @@ class API:
 
     async def user_answer(self, data):
         await self.broker.core.user_answer_callback(data)
+
+    async def wait_user_answer(self, user, chat, prompt=''):
+        await self.send('wait user answer', {'user': user, 'chat': chat, 'prompt': prompt})
