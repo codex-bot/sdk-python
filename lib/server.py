@@ -5,6 +5,7 @@ def http_response(function):
     async def wrapper(self, request):
         text = await request.text()
         post = await request.post()
+        headers = request.headers
         params = request.match_info
         try:
             json = await request.json()
@@ -14,7 +15,8 @@ def http_response(function):
             'text': text,
             'post': post,
             'json': json,
-            'params': params
+            'params': params,
+            'headers': headers
         })
 
         response_text = result.get('text', '')
