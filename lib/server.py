@@ -44,6 +44,9 @@ class Server:
         for route in routes:
             self.web_server.router.add_route(*route)
 
+    def add_static(self, route, path):
+        self.web_server.router.add_static(route, path)
+
     def start(self):
         aiohttp.web.run_app(self.web_server, host=self.host, port=self.port)
 
