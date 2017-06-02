@@ -63,6 +63,9 @@ class CodexBot:
     def set_routes(self, routes):
         self.server.set_routes(routes)
 
+    def add_static(self, route, path):
+        self.server.add_static(route, path)
+
     def register_commands(self, commands):
         self.event_loop.run_until_complete(self.broker.api.register_commands(commands))
 
@@ -74,6 +77,14 @@ class CodexBot:
             "chat_hash": chat_hash,
             "text": message
         })
+
+    async def send_image_to_chat(self, chat_hash, photo, caption=None):
+        await self.broker.api.send('send to service', {
+            "chat_hash": chat_hash,
+            "photo": photo,
+            "caption": caption
+        })
+
 
     async def wait_user_answer(self, user, chat, prompt=''):
         await self.broker.api.wait_user_answer(user, chat, prompt)
