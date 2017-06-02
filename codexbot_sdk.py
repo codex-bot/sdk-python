@@ -63,7 +63,7 @@ class CodexBot:
     def set_routes(self, routes):
         self.server.set_routes(routes)
 
-    def add_static(self, route, path):
+    def set_path_to_static(self, route, path):
         self.server.add_static(route, path)
 
     def register_commands(self, commands):
