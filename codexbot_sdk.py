@@ -31,6 +31,8 @@ class CodexBot:
         self.application_name = application_name
         self.token = token
 
+        self.user_answer_callback = None
+
         self.logging = self.init_logging()
         self.db = self.init_db(db_config)
         self.server = self.init_server()
@@ -61,12 +63,29 @@ class CodexBot:
     def set_routes(self, routes):
         self.server.set_routes(routes)
 
+    def set_path_to_static(self, route, path):
+        self.server.add_static(route, path)
+
     def register_commands(self, commands):
         self.event_loop.run_until_complete(self.broker.api.register_commands(commands))
+
+    def set_user_answer_callback(self, callback):
+        self.user_answer_callback = callback
 
     async def send_to_chat(self, chat_hash, message):
         await self.broker.api.send('send to service', {
             "chat_hash": chat_hash,
             "text": message
         })
+
+    async def send_image_to_chat(self, chat_hash, photo, caption=None):
+        await self.broker.api.send('send to service', {
+            "chat_hash": chat_hash,
+            "photo": photo,
+            "caption": caption
+        })
+
+
+    async def wait_user_answer(self, user, chat, prompt=''):
+        await self.broker.api.wait_user_answer(user, chat, prompt)
 
