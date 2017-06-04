@@ -8,6 +8,10 @@ def http_response(function):
         headers = request.headers
         params = request.match_info
         try:
+            query = dict(param.split('=') for param in request.query_string.split("&"))
+        except Exception as e:
+            query = {}
+        try:
             json = await request.json()
         except Exception as e:
             json = {}
@@ -16,7 +20,8 @@ def http_response(function):
             'post': post,
             'json': json,
             'params': params,
-            'headers': headers
+            'headers': headers,
+            'query': query
         })
 
         response_text = result.get('text', '')
@@ -51,4 +56,3 @@ class Server:
 
     def start(self):
         aiohttp.web.run_app(self.web_server, host=self.host, port=self.port)
-
