@@ -7,6 +7,7 @@ def http_response(function):
         post = await request.post()
         headers = request.headers
         params = request.match_info
+        query = request.query
         try:
             json = await request.json()
         except Exception as e:
@@ -16,7 +17,8 @@ def http_response(function):
             'post': post,
             'json': json,
             'params': params,
-            'headers': headers
+            'headers': headers,
+            'query': query
         })
 
         response_text = result.get('text', '')
@@ -51,4 +53,3 @@ class Server:
 
     def start(self):
         aiohttp.web.run_app(self.web_server, host=self.host, port=self.port)
-
