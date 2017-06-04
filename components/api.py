@@ -47,7 +47,7 @@ class API:
 
     # API COMMANDS
 
-    def show_message(self, data):
+    async def show_message(self, data):
         logging.info(data)
 
     async def service_callback(self, data):
