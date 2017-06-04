@@ -7,10 +7,7 @@ def http_response(function):
         post = await request.post()
         headers = request.headers
         params = request.match_info
-        try:
-            query = dict(param.split('=') for param in request.query_string.split("&"))
-        except Exception as e:
-            query = {}
+        query = request.query
         try:
             json = await request.json()
         except Exception as e:
