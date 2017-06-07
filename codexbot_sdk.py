@@ -76,6 +76,15 @@ class CodexBot:
         await self.broker.api.wait_user_answer(user, chat, prompt)
 
     async def send_to_chat(self, chat_hash, message, parse_mode=None):
+        """
+        Send text message to chat
+
+        :param chat_hash:
+        :param message:
+        :param parse_mode: parse mode for message. Could be Markdown or HTML
+        :return:
+        """
+
 
         payload = {
             "chat_hash": chat_hash,
