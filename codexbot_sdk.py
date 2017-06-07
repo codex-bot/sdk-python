@@ -72,11 +72,29 @@ class CodexBot:
     def set_user_answer_callback(self, callback):
         self.user_answer_callback = callback
 
-    async def send_to_chat(self, chat_hash, message):
-        await self.broker.api.send('send to service', {
+    async def wait_user_answer(self, user, chat, prompt=''):
+        await self.broker.api.wait_user_answer(user, chat, prompt)
+
+    async def send_to_chat(self, chat_hash, message, parse_mode=None):
+        """
+        Send text message to chat
+
+        :param chat_hash:
+        :param message:
+        :param parse_mode: parse mode for message. Could be Markdown or HTML
+        :return:
+        """
+
+
+        payload = {
             "chat_hash": chat_hash,
             "text": message
-        })
+        }
+
+        if parse_mode:
+            payload['parse_mode'] = parse_mode
+
+        await self.broker.api.send('send to service', payload)
 
     async def send_image_to_chat(self, chat_hash, photo, caption=None):
         await self.broker.api.send('send to service', {
@@ -84,8 +102,3 @@ class CodexBot:
             "photo": photo,
             "caption": caption
         })
-
-
-    async def wait_user_answer(self, user, chat, prompt=''):
-        await self.broker.api.wait_user_answer(user, chat, prompt)
-
