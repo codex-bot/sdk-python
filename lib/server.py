@@ -5,7 +5,9 @@ def http_response(function):
     async def wrapper(self, request):
         text = await request.text()
         post = await request.post()
+        headers = request.headers
         params = request.match_info
+        query = request.query
         try:
             json = await request.json()
         except Exception as e:
@@ -14,7 +16,9 @@ def http_response(function):
             'text': text,
             'post': post,
             'json': json,
-            'params': params
+            'params': params,
+            'headers': headers,
+            'query': query
         })
 
         response_text = result.get('text', '')
@@ -44,6 +48,8 @@ class Server:
         for route in routes:
             self.web_server.router.add_route(*route)
 
+    def add_static(self, route, path):
+        self.web_server.router.add_static(route, path)
+
     def start(self):
         aiohttp.web.run_app(self.web_server, host=self.host, port=self.port)
-
