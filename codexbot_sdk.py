@@ -31,7 +31,8 @@ class CodexBot:
         self.application_name = application_name
         self.token = token
 
-        self.user_answer_callback = None
+        self.user_answer_handler = None
+        self.callback_query_handler = None
 
         self.logging = self.init_logging()
         self.db = self.init_db(db_config)
@@ -69,13 +70,16 @@ class CodexBot:
     def register_commands(self, commands):
         self.event_loop.run_until_complete(self.broker.api.register_commands(commands))
 
-    def set_user_answer_callback(self, callback):
-        self.user_answer_callback = callback
+    def set_user_answer_handler(self, handler):
+        self.user_answer_handler = handler
+
+    def set_callback_query_handler(self, handler):
+        self.callback_query_handler = handler
 
     async def wait_user_answer(self, user, chat, prompt=''):
         await self.broker.api.wait_user_answer(user, chat, prompt)
 
-    async def send_to_chat(self, chat_hash, message, parse_mode=None):
+    async def send_text_to_chat(self, chat_hash, message, parse_mode=None):
         """
         Send text message to chat
 
@@ -85,7 +89,6 @@ class CodexBot:
         :return:
         """
 
-
         payload = {
             "chat_hash": chat_hash,
             "text": message
@@ -94,11 +97,46 @@ class CodexBot:
         if parse_mode:
             payload['parse_mode'] = parse_mode
 
-        await self.broker.api.send('send to service', payload)
+        await self.send_to_chat(payload)
 
     async def send_image_to_chat(self, chat_hash, photo, caption=None):
-        await self.broker.api.send('send to service', {
+        payload = {
             "chat_hash": chat_hash,
             "photo": photo,
             "caption": caption
-        })
+        }
+        await self.send_to_chat(payload)
+
+    async def send_inline_keyboard_to_chat(self, chat_hash, message, keyboard):
+        """
+        Send inline keyboard to chat
+
+        :param keyboard is array of button rows
+        Each row is array of buttons
+        Button is a dict:
+            - text -- button label
+            - callback_data -- (optional) string you'll get, when button is pressed
+            - url -- (optional) url to open, when button is pressed
+
+
+        :param chat_hash:
+        :param message:
+        :param keyboard:
+        :return:
+        """
+
+        for row in keyboard:
+            for button in row:
+                button['callback_data'] = self.token + ' ' + button['callback_data']
+
+        payload = {
+            "chat_hash": chat_hash,
+            "text": message,
+            "markup": {
+                "inline_keyboard": keyboard
+            }
+        }
+        await self.send_to_chat(payload)
+
+    async def send_to_chat(self, payload):
+        await self.broker.api.send('send to service', payload)

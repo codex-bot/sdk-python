@@ -19,7 +19,8 @@ class API:
         self.methods = {
             'show message': self.show_message,
             'service callback': self.service_callback,
-            'user answer': self.user_answer
+            'user answer': self.user_answer,
+            'callback query': self.callback_query
         }
 
     async def process(self, message_data):
@@ -54,8 +55,12 @@ class API:
         await self.commands_list[data['command']](data)
 
     async def user_answer(self, data):
-        if self.broker.core.user_answer_callback:
-            await self.broker.core.user_answer_callback(data)
+        if self.broker.core.user_answer_handler:
+            await self.broker.core.user_answer_hander(data)
 
     async def wait_user_answer(self, user, chat, prompt=''):
         await self.send('wait user answer', {'user': user, 'chat': chat, 'prompt': prompt})
+
+    async def callback_query(self, data):
+        if self.broker.core.callback_query_handler:
+            await self.broker.core.callback_query_handler(data)
