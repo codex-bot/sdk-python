@@ -57,5 +57,5 @@ class Db:
     def update(self, collection, find_params, update_params, upsert=False):
         return self.db[collection].update(find_params, update_params, upsert=upsert)
 
-    def remove(self, collection):
-        return self.db[collection].remove()
+    def remove(self, collection, find_params={}):
+        return self.db[collection].remove(find_params)
