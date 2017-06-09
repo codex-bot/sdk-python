@@ -1,5 +1,6 @@
 import asyncio
 
+from sdk.lib.scheduler import Scheduler
 from .lib.db import Db
 from .lib.logging import Logging
 from .components.broker import Broker
@@ -36,6 +37,7 @@ class CodexBot:
 
         self.logging = self.init_logging()
         self.db = self.init_db(db_config)
+        self.scheduler = self.init_scheduler()
         self.server = self.init_server()
         self.broker = self.init_broker(application_name, queue_name)
 
@@ -54,6 +56,10 @@ class CodexBot:
         self.logging.debug("Initialize db.")
         db_name = "module_{}".format(self.application_name)
         return Db(db_name, db_config["host"], db_config["port"])
+
+    def init_scheduler(self):
+        scheduler_object = Scheduler()
+        return scheduler_object.scheduler
 
     def log(self, message):
         self.logging.debug(message)
