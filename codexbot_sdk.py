@@ -58,8 +58,8 @@ class CodexBot:
         return Db(db_name, db_config["host"], db_config["port"])
 
     def init_scheduler(self):
-        scheduler_object = Scheduler()
-        return scheduler_object.scheduler
+        scheduler_object = Scheduler(sdk=self)
+        return scheduler_object
 
     def log(self, message):
         self.logging.debug(message)
