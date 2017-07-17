@@ -4,14 +4,20 @@ import aiohttp.web
 def http_response(function):
     async def wrapper(self, request):
         text = await request.text()
-        post = await request.post()
         headers = request.headers
         params = request.match_info
         query = request.query
+        
+        try:
+            post = await request.post()
+        except Exception as e:
+            post = {}
+
         try:
             json = await request.json()
         except Exception as e:
             json = {}
+
         result = await function(self, {
             'text': text,
             'post': post,
