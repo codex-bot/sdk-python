@@ -89,9 +89,9 @@ logging.py          :17                  debug() 	 /cities handler fired with pa
 
 ## Issues and improvements
 
-Ask a question or report a bug on the [create issue page](https://github.com/codex-bot/weather/issues/new).
+Ask a question or report a bug on the [create issue page](https://github.com/codex-team/codex.bot/issues/new).
 
-Know how to improve platform? [Fork it](https://github.com/codex-bot/weather) and send a pull request.
+Know how to improve SDK? [Fork it](https://github.com/codex-bot/sdk-python) and send a pull request.
 
 ## About CodeX
 
