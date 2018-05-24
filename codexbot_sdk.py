@@ -85,19 +85,21 @@ class CodexBot:
     async def wait_user_answer(self, user, chat, prompt=''):
         await self.broker.api.wait_user_answer(user, chat, prompt)
 
-    async def send_text_to_chat(self, chat_hash, message, parse_mode=None):
+    async def send_text_to_chat(self, chat_hash, message, parse_mode=None, disable_web_page_preview=False):
         """
         Send text message to chat
 
         :param chat_hash:
         :param message:
         :param parse_mode: parse mode for message. Could be Markdown or HTML
+        :param disable_web_page_preview: Optional disable link preview
         :return:
         """
 
         payload = {
             "chat_hash": chat_hash,
-            "text": message
+            "text": message,
+            "disable_web_page_preview": disable_web_page_preview
         }
 
         if parse_mode:
