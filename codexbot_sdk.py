@@ -1,18 +1,18 @@
 import asyncio
 
-from sdk.lib.scheduler import Scheduler
+from .lib.scheduler import Scheduler
 from .lib.db import Db
 from .lib.logging import Logging
-from .components.broker import Broker
 from .lib.server import Server, http_response
+from .components.broker import Broker
+from hawkcatcher import Hawk
 
 
 class CodexBot:
-
     # Make decorator for HTTP callback public
     http_response = http_response
 
-    def __init__(self, application_name, host, port, db_config, token):
+    def __init__(self, application_name, host, port, db_config, token, hawk_token=''):
         """
         Initiates SDK
         """
@@ -40,6 +40,19 @@ class CodexBot:
         self.scheduler = self.init_scheduler()
         self.server = self.init_server()
         self.broker = self.init_broker(application_name, queue_name)
+
+        """
+        Enable python error catcher for https://hawk.so
+
+        You can catch any custom exception
+        > try:
+        >     ...
+        > except:
+        >     sdk.hawk.catch()
+        """
+        if hawk_token != '':
+            self.hawk = Hawk(hawk_token)
+            self.logging.debug("Init Hawk catcher")
 
         self.broker.start()
 
