@@ -12,7 +12,7 @@ class CodexBot:
     # Make decorator for HTTP callback public
     http_response = http_response
 
-    def __init__(self, application_name, host, port, db_config, token, hawk_token=''):
+    def __init__(self, application_name, host, port, db_config, token, hawk_token=None):
         """
         Initiates SDK
         """
@@ -50,7 +50,7 @@ class CodexBot:
         > except:
         >     sdk.hawk.catch()
         """
-        if hawk_token != '':
+        if hawk_token is not None:
             self.hawk = Hawk(hawk_token)
             self.logging.debug("Init Hawk catcher")
 
