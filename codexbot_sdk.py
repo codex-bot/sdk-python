@@ -85,7 +85,7 @@ class CodexBot:
     async def wait_user_answer(self, user, chat, prompt=''):
         await self.broker.api.wait_user_answer(user, chat, prompt)
 
-    async def send_text_to_chat(self, chat_hash, message, parse_mode=None, disable_web_page_preview=False):
+    async def send_text_to_chat(self, chat_hash, message, parse_mode=None, disable_web_page_preview=False, bot=None):
         """
         Send text message to chat
 
@@ -99,7 +99,8 @@ class CodexBot:
         payload = {
             "chat_hash": chat_hash,
             "text": message,
-            "disable_web_page_preview": disable_web_page_preview
+            "disable_web_page_preview": disable_web_page_preview,
+            "bot": bot
         }
 
         if parse_mode:
@@ -107,15 +108,16 @@ class CodexBot:
 
         await self.send_to_chat(payload)
 
-    async def send_image_to_chat(self, chat_hash, photo, caption=None):
+    async def send_image_to_chat(self, chat_hash, photo, caption=None, bot=None):
         payload = {
             "chat_hash": chat_hash,
             "photo": photo,
-            "caption": caption
+            "caption": caption,
+            "bot": bot
         }
         await self.send_to_chat(payload)
 
-    async def send_inline_keyboard_to_chat(self, chat_hash, message, keyboard):
+    async def send_inline_keyboard_to_chat(self, chat_hash, message, keyboard, bot=None):
         """
         Send inline keyboard to chat
 
@@ -142,7 +144,8 @@ class CodexBot:
             "text": message,
             "markup": {
                 "inline_keyboard": keyboard
-            }
+            },
+            "bot": bot
         }
         await self.send_to_chat(payload)
 
