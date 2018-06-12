@@ -1,0 +1,6 @@
+aioamqp
+aiohttp
+apscheduler
+asyncio
+hawkcatcher
+pymongo
