@@ -56,7 +56,7 @@ class API:
 
     async def user_answer(self, data):
         if self.broker.core.user_answer_handler:
-            await self.broker.core.user_answer_hander(data)
+            await self.broker.core.user_answer_handler(data)
 
     async def wait_user_answer(self, user, chat, prompt=''):
         await self.send('wait user answer', {'user': user, 'chat': chat, 'prompt': prompt})
