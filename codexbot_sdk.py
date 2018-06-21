@@ -14,12 +14,21 @@ class CodexBot:
 
     def __init__(self, application_name, host, port, db_config, token, hawk_token=None):
         """
+        Enable python error catcher for https://hawk.so
+
+        You can catch any custom exception
+        > try:
+        >     ...
+        > except:
+        >     sdk.hawk.catch()
+        """
+        self.hawk = Hawk(hawk_token) if hawk_token is not None else None
+
+        """
         Initiates SDK
         """
-
         if not token:
-            print('Please, pass your app`s token.\nYou can get it from our bot by /newapp command')
-            exit()
+            raise Exception("Please, pass your app`s token.\nYou can get it from our bot by /newapp command")
 
         self.host = host
         self.port = port
@@ -39,20 +48,7 @@ class CodexBot:
         self.db = self.init_db(db_config)
         self.scheduler = self.init_scheduler()
         self.server = self.init_server()
-        self.broker = self.init_broker(application_name, queue_name)
-
-        """
-        Enable python error catcher for https://hawk.so
-
-        You can catch any custom exception
-        > try:
-        >     ...
-        > except:
-        >     sdk.hawk.catch()
-        """
-        if hawk_token is not None:
-            self.hawk = Hawk(hawk_token)
-            self.logging.debug("Init Hawk catcher")
+        self.broker = self.init_broker(application_name, queue_name, self.hawk)
 
         self.broker.start()
 
@@ -62,8 +58,8 @@ class CodexBot:
     def init_server(self):
         return Server(self.event_loop, self.host, self.port)
 
-    def init_broker(self, application_name, queue_name):
-        return Broker(self, self.event_loop, application_name, queue_name)
+    def init_broker(self, application_name, queue_name, hawk):
+        return Broker(self, self.event_loop, application_name, queue_name, hawk)
 
     def init_db(self, db_config):
         self.logging.debug("Initialize db.")
