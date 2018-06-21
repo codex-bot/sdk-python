@@ -101,6 +101,7 @@ class CodexBot:
     async def send_text_to_chat(self, chat_hash, message,
                                 parse_mode=None,
                                 disable_web_page_preview=False,
+                                remove_keyboard=False,
                                 update_id=None,
                                 want_response=None,
                                 bot=None):
@@ -123,6 +124,8 @@ class CodexBot:
 
         if parse_mode:
             payload['parse_mode'] = parse_mode
+        if remove_keyboard:
+            payload['markup'] = {'remove_keyboard': {'remove_keyboard': True, 'selective': False}}
         if update_id:
             payload['update_id'] = update_id
         if want_response:
@@ -166,6 +169,39 @@ class CodexBot:
             "text": message,
             "markup": {
                 "inline_keyboard": keyboard
+            },
+            "bot": bot
+        }
+        await self.send_to_chat(payload)
+
+    async def send_keyboard_to_chat(self, chat_hash, message, keyboard, bot=None):
+        """
+        todo ////
+        Send inline keyboard to chat
+
+        :param keyboard is array of button rows
+        Each row is array of buttons
+        Button is a dict:
+            - text -- button label
+            - callback_data -- (optional) string you'll get, when button is pressed
+            - url -- (optional) url to open, when button is pressed
+
+
+        :param chat_hash:
+        :param message:
+        :param keyboard:
+        :return:
+        """
+
+        # for row in keyboard:
+        #     for button in row:
+        #         button['callback_data'] = self.token + ' ' + button['callback_data']
+
+        payload = {
+            "chat_hash": chat_hash,
+            "text": message,
+            "markup": {
+                "keyboard": keyboard
             },
             "bot": bot
         }
