@@ -154,7 +154,8 @@ class CodexBot:
                                            keyboard,
                                            bot=None,
                                            update_id=None,
-                                           parse_mode=None):
+                                           parse_mode=None,
+                                           disable_web_page_preview=None):
         """
         Send inline keyboard to chat
 
@@ -182,6 +183,7 @@ class CodexBot:
         :param string parse_mode:
         :param bot:
         :param update_id:
+        :param disable_web_page_preview:
         :return:
         """
 
@@ -196,6 +198,7 @@ class CodexBot:
             "markup": {
                 "inline_keyboard": keyboard
             },
+            "disable_web_page_preview": disable_web_page_preview,
             "bot": bot,
             "update_id": update_id,
             "want_response": True
@@ -244,3 +247,27 @@ class CodexBot:
 
     async def send_to_chat(self, payload):
         await self.broker.api.send('send to service', payload)
+
+    def endings(self, count, form1, form2, form5):
+        """
+        Return word with right ending
+
+        :param integer count:
+        :param string form1: стол, дерево, ложка
+        :param string form2: стола, дерева, ложки
+        :param string form5: столов, деревьев, ложек
+        :return:
+        """
+        n = count % 100
+        n1 = count % 10
+
+        if n > 10 and n < 20:
+            return form5
+
+        if n1 > 1 and n1 < 5:
+            return form2
+
+        if n1 == 1:
+            return form1
+
+        return form5
