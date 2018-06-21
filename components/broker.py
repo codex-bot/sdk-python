@@ -6,7 +6,7 @@ from ..lib.rabbitmq import init_receiver, add_message_to_queue
 
 class Broker:
 
-    def __init__(self, core, event_loop, application_name, queue_name):
+    def __init__(self, core, event_loop, application_name, queue_name, hawk):
         """
         Application broker initialization
         :param core:
@@ -14,20 +14,22 @@ class Broker:
         :param queue_name: - passed from sdk constructor
         """
         logging.info("Broker started with queue_name " + queue_name)
+        self.hawk = hawk
         self.core = core
         self.event_loop = event_loop
         self.queue_name = queue_name
-        self.api = API(self, application_name)
+        self.api = API(self, application_name, hawk)
 
     async def callback(self, channel, body, envelope, properties):
         try:
-            logging.debug(" [x] Received %r" % body)
+            logging.debug("[x] Received %r" % body)
             await self.api.process(body.decode("utf-8"))
         except Exception as e:
+            if self.hawk:
+                self.hawk.catch()
             logging.error("Broker callback error: {}".format(e))
 
     async def send(self, message, host='localhost'):
-
         await add_message_to_queue(
             message, 'core'
         )

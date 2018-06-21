@@ -6,8 +6,9 @@ from ..lib.logging import Logging
 
 class API:
 
-    def __init__(self, broker, app_name):
+    def __init__(self, broker, app_name, hawk):
 
+        self.hawk = hawk
         self.app_name = app_name
         self.broker = broker
         self.token = app_name
@@ -30,6 +31,8 @@ class API:
             command = message_data.get('command', 'show message')
             await self.methods[command](payload)
         except Exception as e:
+            if self.hawk:
+                self.hawk.catch()
             logging.error("API Message Process error: {}".format(e))
 
     async def send(self, command, payload):
