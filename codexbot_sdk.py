@@ -102,6 +102,8 @@ class CodexBot:
                                 parse_mode=None,
                                 disable_web_page_preview=False,
                                 remove_keyboard=False,
+                                update_id=None,
+                                want_response=None,
                                 bot=None):
         """
         Send text message to chat
@@ -124,6 +126,10 @@ class CodexBot:
             payload['parse_mode'] = parse_mode
         if remove_keyboard:
             payload['markup'] = {'remove_keyboard': {'remove_keyboard': True, 'selective': False}}
+        if update_id:
+            payload['update_id'] = update_id
+        if want_response:
+            payload['want_response'] = want_response
 
         await self.send_to_chat(payload)
 
