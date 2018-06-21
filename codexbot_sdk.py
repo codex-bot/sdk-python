@@ -22,9 +22,7 @@ class CodexBot:
         > except:
         >     sdk.hawk.catch()
         """
-        self.hawk = None
-        if hawk_token is not None:
-            self.hawk = Hawk(hawk_token)
+        self.hawk = Hawk(hawk_token) if hawk_token is not None else None
 
         """
         Initiates SDK
