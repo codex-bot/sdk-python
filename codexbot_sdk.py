@@ -98,7 +98,11 @@ class CodexBot:
     async def wait_user_answer(self, user, chat, prompt=''):
         await self.broker.api.wait_user_answer(user, chat, prompt)
 
-    async def send_text_to_chat(self, chat_hash, message, parse_mode=None, disable_web_page_preview=False, bot=None):
+    async def send_text_to_chat(self, chat_hash, message,
+                                parse_mode=None,
+                                disable_web_page_preview=False,
+                                remove_keyboard=False,
+                                bot=None):
         """
         Send text message to chat
 
@@ -118,6 +122,8 @@ class CodexBot:
 
         if parse_mode:
             payload['parse_mode'] = parse_mode
+        if remove_keyboard:
+            payload['markup'] = {'remove_keyboard': {'remove_keyboard': True, 'selective': False}}
 
         await self.send_to_chat(payload)
 
