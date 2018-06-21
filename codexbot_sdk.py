@@ -108,55 +108,82 @@ class CodexBot:
         """
         Send text message to chat
 
-        :param chat_hash:
-        :param message:
-        :param parse_mode: parse mode for message. Could be Markdown or HTML
+        :param string chat_hash:
+        :param string message:
+        :param string parse_mode: parse mode for message. Could be Markdown or HTML
         :param disable_web_page_preview: Optional disable link preview
+        :param boolean remove_keyboard:
+        :param update_id:
+        :param boolean want_response:
+        :param bot:
         :return:
         """
 
         payload = {
             "chat_hash": chat_hash,
             "text": message,
+            "parse_mode": parse_mode,
             "disable_web_page_preview": disable_web_page_preview,
-            "bot": bot
+            "bot": bot,
+            "want_response": want_response,
+            "update_id": update_id
         }
 
-        if parse_mode:
-            payload['parse_mode'] = parse_mode
         if remove_keyboard:
             payload['markup'] = {'remove_keyboard': {'remove_keyboard': True, 'selective': False}}
-        if update_id:
-            payload['update_id'] = update_id
-        if want_response:
-            payload['want_response'] = want_response
 
         await self.send_to_chat(payload)
 
-    async def send_image_to_chat(self, chat_hash, photo, caption=None, bot=None):
+    async def send_image_to_chat(self,
+                                 chat_hash,
+                                 photo,
+                                 caption=None,
+                                 bot=None):
         payload = {
             "chat_hash": chat_hash,
             "photo": photo,
             "caption": caption,
             "bot": bot
         }
+
         await self.send_to_chat(payload)
 
-    async def send_inline_keyboard_to_chat(self, chat_hash, message, keyboard, bot=None):
+    async def send_inline_keyboard_to_chat(self,
+                                           chat_hash,
+                                           message,
+                                           keyboard,
+                                           bot=None,
+                                           update_id=None,
+                                           parse_mode=None,
+                                           disable_web_page_preview=None):
         """
         Send inline keyboard to chat
 
-        :param keyboard is array of button rows
+        :param keyboard:  array of button rows
         Each row is array of buttons
         Button is a dict:
             - text -- button label
             - callback_data -- (optional) string you'll get, when button is pressed
             - url -- (optional) url to open, when button is pressed
 
+        keyboard = [
+            [
+                { "text": "1", "callback_data": "1" },
+                { "text": "2", "callback_data": "2" },
+                { "text": "3", "callback_data": "3" },
+                { "text": "4", "callback_data": "4" },
+                { "text": "5", "callback_data": "5" },
+                { "text": ">", "callback_data": ">" },
+            ],
+        ]
 
-        :param chat_hash:
-        :param message:
-        :param keyboard:
+
+        :param string chat_hash:
+        :param string message:
+        :param string parse_mode:
+        :param bot:
+        :param update_id:
+        :param disable_web_page_preview:
         :return:
         """
 
@@ -167,44 +194,55 @@ class CodexBot:
         payload = {
             "chat_hash": chat_hash,
             "text": message,
+            "parse_mode": parse_mode,
             "markup": {
                 "inline_keyboard": keyboard
             },
-            "bot": bot
+            "disable_web_page_preview": disable_web_page_preview,
+            "bot": bot,
+            "update_id": update_id,
+            "want_response": True
         }
+
         await self.send_to_chat(payload)
 
-    async def send_keyboard_to_chat(self, chat_hash, message, keyboard, bot=None):
+    async def send_keyboard_to_chat(self,
+                                    chat_hash,
+                                    message,
+                                    keyboard,
+                                    bot=None,
+                                    parse_mode=None):
         """
-        todo ////
-        Send inline keyboard to chat
+        Set custom keyboard
 
-        :param keyboard is array of button rows
-        Each row is array of buttons
-        Button is a dict:
-            - text -- button label
-            - callback_data -- (optional) string you'll get, when button is pressed
-            - url -- (optional) url to open, when button is pressed
-
-
-        :param chat_hash:
-        :param message:
         :param keyboard:
+
+        keyboard = {
+            'keyboard': [
+                [ {'text': 'yes'} ],
+                [ {'text': 'no'} ]
+            ],
+            'resize_keyboard': True,
+            'one_time_keyboard': True
+        }
+
+        :param string chat_hash:
+        :param string message:
+        :param bot:
+        :param string parse_mode:
         :return:
         """
-
-        # for row in keyboard:
-        #     for button in row:
-        #         button['callback_data'] = self.token + ' ' + button['callback_data']
 
         payload = {
             "chat_hash": chat_hash,
             "text": message,
+            "parse_mode": parse_mode,
             "markup": {
                 "keyboard": keyboard
             },
             "bot": bot
         }
+
         await self.send_to_chat(payload)
 
     async def send_to_chat(self, payload):
