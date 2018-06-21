@@ -155,7 +155,8 @@ class CodexBot:
                                            bot=None,
                                            update_id=None,
                                            parse_mode=None,
-                                           disable_web_page_preview=None):
+                                           disable_web_page_preview=None,
+                                           want_response=None):
         """
         Send inline keyboard to chat
 
@@ -184,6 +185,7 @@ class CodexBot:
         :param bot:
         :param update_id:
         :param disable_web_page_preview:
+        :param want_response:
         :return:
         """
 
@@ -201,7 +203,7 @@ class CodexBot:
             "disable_web_page_preview": disable_web_page_preview,
             "bot": bot,
             "update_id": update_id,
-            "want_response": True
+            "want_response": want_response
         }
 
         await self.send_to_chat(payload)
