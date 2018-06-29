@@ -29,11 +29,12 @@ def http_response(function):
 
         response_text = result.get('text', '')
         response_status = result.get('status', 200)
+        response_content_type = result.get('content-type')
 
         if response_status != 404:
-            return aiohttp.web.Response(text=response_text)
+            return aiohttp.web.Response(text=response_text, content_type=response_content_type)
         else:
-            return aiohttp.web.HTTPNotFound(text=response_text)
+            return aiohttp.web.HTTPNotFound(text=response_text, content_type=response_content_type)
 
     return wrapper
 
