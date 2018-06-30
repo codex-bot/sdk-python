@@ -60,3 +60,6 @@ class Server:
 
     def start(self):
         aiohttp.web.run_app(self.web_server, host=self.host, port=self.port)
+
+    def redirect(self, redirect_uri):
+        return aiohttp.web.HTTPFound(redirect_uri)
