@@ -23,7 +23,7 @@ class Scheduler:
             - Run scheduler job
 
         Example:
-            self.sdk.scheduler.restore(Methods.say_hello)
+            self.sdk.scheduler.restore(say_hello)
 
         :param processor: function, which returns appropriate callback to call for the job (by payload)
         """
@@ -48,8 +48,11 @@ class Scheduler:
             - Add Apscheduler job
 
         Example:
+            def say_hello(payload, data):
+                print(data['message'])
+
             self.sdk.scheduler.add(
-                Methods.say_hello,                              # Callback function
+                say_hello,                                      # Callback function
                 payload,                                        # Job identify by chat and bot
                 args=[payload, data],                           # Callback params
                 trigger_params={'minute': '0', 'hour': '*/6'}   # Cron params
