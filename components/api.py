@@ -61,8 +61,8 @@ class API:
         if self.broker.core.user_answer_handler:
             await self.broker.core.user_answer_handler(data)
 
-    async def wait_user_answer(self, user, chat, prompt=''):
-        await self.send('wait user answer', {'user': user, 'chat': chat, 'prompt': prompt})
+    async def wait_user_answer(self, user, chat, prompt='', bot=None):
+        await self.send('wait user answer', {'user': user, 'chat': chat, 'prompt': prompt, 'bot': bot})
 
     async def callback_query(self, data):
         if self.broker.core.callback_query_handler:

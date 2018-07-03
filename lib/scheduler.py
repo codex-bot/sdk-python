@@ -23,7 +23,7 @@ class Scheduler:
             - Run scheduler job
 
         Example:
-            self.sdk.scheduler.restore(Methods.say_hello)
+            self.sdk.scheduler.restore(say_hello)
 
         :param processor: function, which returns appropriate callback to call for the job (by payload)
         """
@@ -34,23 +34,26 @@ class Scheduler:
         for job in jobs:
             self.scheduler.add_job(
                 processor,
-                id=job['chat_id'],
+                id=job['id'],
                 args=job['args'],
                 trigger='cron',
                 replace_existing=True,
                 **job['trigger_params']
             )
 
-    def add(self, callback, chat_id, args, trigger_params=None, payload=None):
+    def add(self, callback, payload, args, trigger_params=None):
         """
         Add new scheduling job.
             - Append params to DB
             - Add Apscheduler job
 
         Example:
+            def say_hello(payload, data):
+                print(data['message'])
+
             self.sdk.scheduler.add(
-                Methods.say_hello,                              # Callback function
-                chat_id=payload["chat"],                        # Job identifier
+                say_hello,                                      # Callback function
+                payload,                                        # Job identify by chat and bot
                 args=[payload, data],                           # Callback params
                 trigger_params={'minute': '0', 'hour': '*/6'}   # Cron params
             )
@@ -66,27 +69,27 @@ class Scheduler:
             second (int|str) – second (0-59)
 
         :param callback: function to execute at the time
-        :param chat_id: chat ID
+        :param payload: chat and bot
         :param args: arguments for callback function
         :param trigger_params: {'minute': '*', 'hour': '*/2'}
-        :param payload: data to keep in DB for the further restore function usage
         """
+        job_id = self.__create_id(payload)
+
         try:
             # Save job to db
             self.sdk.db.insert(
                 Scheduler.COLLECTION_NAME,
                 {
-                    'chat_id': chat_id,
+                    'id': job_id,
                     'trigger_params': trigger_params,
-                    'args': args,
-                    'payload': payload,
+                    'args': args
                 }
             )
 
             # Run job
             self.scheduler.add_job(
                 callback,
-                id=chat_id,
+                id=job_id,
                 args=args,
                 trigger='cron',
                 replace_existing=True,
@@ -97,33 +100,47 @@ class Scheduler:
                 self.sdk.hawk.catch()
             self.sdk.logging.debug("Error: {}".format(e))
 
-    def find(self, chat_id):
+    def find(self, payload):
         """
         Return saved scheduler data from DB by chat_id
-        :param chat_id: chat ID
+        :param payload: chat and bot
         :return: data from db
         """
-        result = self.sdk.db.find_one(Scheduler.COLLECTION_NAME, {'chat_id': chat_id})
+        job_id = self.__create_id(payload)
+
+        result = self.sdk.db.find_one(Scheduler.COLLECTION_NAME, {'id': job_id})
 
         return result
 
-    def remove(self, chat_id):
+    def remove(self, payload):
         """
         Remove saved scheduler data from DB and stop job by chat_id
 
         Example:
             self.sdk.scheduler.remove(
-                payload['chat']             # Job identifier
+                payload                    # Job identifier by chat and bot
             )
 
-        :param chat_id: chat ID
+        :param payload: chat and bot
         :return: remove result
         """
+        job_id = self.__create_id(payload)
+
         try:
-            self.scheduler.remove_job(chat_id)
+            self.scheduler.remove_job(job_id)
         except Exception as e:
             if self.sdk.hawk:
                 self.sdk.hawk.catch()
             self.sdk.logging.debug("Error during remove job: {}".format(e))
 
-        return self.sdk.db.remove(Scheduler.COLLECTION_NAME, {'chat_id': chat_id})
+        return self.sdk.db.remove(Scheduler.COLLECTION_NAME, {'id': job_id})
+
+    def __create_id(self, payload):
+        job_id = payload.get('chat')
+
+        bot_hash = payload.get('bot', None)
+
+        if bot_hash:
+            job_id = "{}:{}".format(bot_hash, job_id)
+
+        return job_id
