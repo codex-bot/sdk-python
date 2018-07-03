@@ -20,7 +20,8 @@ class CodexBot:
         > try:
         >     ...
         > except:
-        >     sdk.hawk.catch()
+        >     if self.sdk.hawk:
+        >         self.sdk.hawk.catch()
         """
         self.hawk = Hawk(hawk_token) if hawk_token is not None else None
 
@@ -91,8 +92,8 @@ class CodexBot:
     def set_callback_query_handler(self, handler):
         self.callback_query_handler = handler
 
-    async def wait_user_answer(self, user, chat, prompt=''):
-        await self.broker.api.wait_user_answer(user, chat, prompt)
+    async def wait_user_answer(self, user, chat, prompt='', bot=None):
+        await self.broker.api.wait_user_answer(user, chat, prompt=prompt, bot=bot)
 
     async def send_text_to_chat(self, chat_hash, message,
                                 parse_mode=None,
