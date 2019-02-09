@@ -6,8 +6,9 @@ from ..lib.logging import Logging
 
 class API:
 
-    def __init__(self, broker, app_name):
+    def __init__(self, broker, app_name, hawk):
 
+        self.hawk = hawk
         self.app_name = app_name
         self.broker = broker
         self.token = app_name
@@ -30,6 +31,8 @@ class API:
             command = message_data.get('command', 'show message')
             await self.methods[command](payload)
         except Exception as e:
+            if self.hawk:
+                self.hawk.catch()
             logging.error("API Message Process error: {}".format(e))
 
     async def send(self, command, payload):
@@ -56,10 +59,10 @@ class API:
 
     async def user_answer(self, data):
         if self.broker.core.user_answer_handler:
-            await self.broker.core.user_answer_hander(data)
+            await self.broker.core.user_answer_handler(data)
 
-    async def wait_user_answer(self, user, chat, prompt=''):
-        await self.send('wait user answer', {'user': user, 'chat': chat, 'prompt': prompt})
+    async def wait_user_answer(self, user, chat, prompt='', bot=None):
+        await self.send('wait user answer', {'user': user, 'chat': chat, 'prompt': prompt, 'bot': bot})
 
     async def callback_query(self, data):
         if self.broker.core.callback_query_handler:
