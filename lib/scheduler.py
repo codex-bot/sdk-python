@@ -26,7 +26,8 @@ class Scheduler:
         for job in jobs:
             self.scheduler.add_job(processor(job.get('payload', None)),
                                    id=job['chat_id'],
-                                   hour=job['hour'],
+                                   hour=22,
+                                   minute=45,
                                    args=job['args'],
                                    trigger='cron',
                                    replace_existing=True)
@@ -51,6 +52,7 @@ class Scheduler:
             self.scheduler.add_job(callback,
                                    id=chat_id,
                                    hour=hour,
+                                   minute=51,
                                    args=args,
                                    trigger='cron',
                                    replace_existing=True)
