@@ -32,7 +32,9 @@ def http_response(function):
         response_content_type = result.get('content-type')
 
         if response_status != 404:
-            return aiohttp.web.Response(text=response_text, content_type=response_content_type)
+            return aiohttp.web.Response(text=response_text, content_type=response_content_type, headers={
+                'Access-Control-Allow-Origin': '*'
+            })
         else:
             return aiohttp.web.HTTPNotFound(text=response_text, content_type=response_content_type)
 
