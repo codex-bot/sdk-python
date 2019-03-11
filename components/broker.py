@@ -3,7 +3,7 @@ import logging
 from aio_pika import IncomingMessage
 
 from .api import API
-from ..lib.rabbitmq import init_receiver, add_message_to_queue
+from ..lib.rabbitmq import init_receiver, add_message_to_queue, connect
 
 
 class Broker:
@@ -22,6 +22,8 @@ class Broker:
         self.queue_name = queue_name
         self.api = API(self, application_name, hawk)
 
+        self.channel = self.event_loop.run_until_complete(connect())
+
     async def callback(self, message: IncomingMessage):
         try:
             logging.debug(" [x] Received %r" % message.body)
@@ -32,8 +34,8 @@ class Broker:
                 self.hawk.catch()
             logging.error("Broker callback error: {}".format(e))
 
-    async def send(self, message, host='localhost'):
-        await add_message_to_queue(message, 'core', host)
+    async def send(self, message):
+        await add_message_to_queue(message, 'core', self.channel)
 
     def start(self):
         self.event_loop.run_until_complete(init_receiver(self.callback, self.queue_name))
