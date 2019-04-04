@@ -1,5 +1,12 @@
 import aio_pika
 
+
+async def connect(host='localhost'):
+    connection = await aio_pika.connect_robust(host=host)
+    channel = await connection.channel()
+    return channel
+
+
 async def init_receiver(callback, queue_name, host='localhost'):
     connection = await aio_pika.connect_robust(host=host)
     channel = await connection.channel()
@@ -8,9 +15,6 @@ async def init_receiver(callback, queue_name, host='localhost'):
     await queue.consume(callback)
 
 
-async def add_message_to_queue(data, queue_name, host='localhost'):
-    connection = await aio_pika.connect_robust(host=host)
-    channel = await connection.channel()
+async def add_message_to_queue(data, queue_name, channel):
     message = aio_pika.Message(data.encode(), delivery_mode=aio_pika.DeliveryMode.PERSISTENT)
     await channel.default_exchange.publish(message, routing_key=queue_name)
-    await connection.close()
