@@ -8,11 +8,16 @@ from .components.broker import Broker
 from hawkcatcher import Hawk
 
 
+class NoneCallable:
+    def __getattr__(self, name):
+        return lambda *args, **kwargs: self
+
+
 class CodexBot:
     # Make decorator for HTTP callback public
     http_response = http_response
 
-    def __init__(self, application_name, host, port, db_config, token, hawk_token=None):
+    def __init__(self, application_name, host, port, db_config, token, hawk_params=None):
         """
         Enable python error catcher for https://hawk.so
 
@@ -23,7 +28,7 @@ class CodexBot:
         >     if self.sdk.hawk:
         >         self.sdk.hawk.catch()
         """
-        self.hawk = Hawk(hawk_token) if hawk_token is not None else None
+        self.hawk = Hawk(hawk_params) if hawk_params is not None else NoneCallable()
 
         """
         Initiates SDK
