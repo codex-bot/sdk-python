@@ -18,14 +18,18 @@ def http_response(function):
         except Exception as e:
             json = {}
 
-        result = await function(self, {
-            'text': text,
-            'post': post,
-            'json': json,
-            'params': params,
-            'headers': headers,
-            'query': query
-        })
+        try:
+            result = await function(self, {
+                'text': text,
+                'post': post,
+                'json': json,
+                'params': params,
+                'headers': headers,
+                'query': query
+            })
+        except Exception as e:
+            self.sdk.hawk.catch()
+            return aiohttp.web.HTTPInternalServerError()
 
         response_text = result.get('text', '')
         response_status = result.get('status', 200)
