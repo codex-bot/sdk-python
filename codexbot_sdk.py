@@ -49,7 +49,7 @@ class CodexBot:
         self.db = self.init_db(db_config)
         self.scheduler = self.init_scheduler()
         self.server = self.init_server()
-        self.broker = self.init_broker(application_name, queue_name, rabbitmq_host , self.hawk)
+        self.broker = self.init_broker(application_name, queue_name, rabbitmq_host, self.hawk)
 
         self.broker.start()
 
