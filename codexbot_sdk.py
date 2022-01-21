@@ -8,16 +8,11 @@ from .components.broker import Broker
 from hawkcatcher import Hawk
 
 
-class NoneCallable:
-    def __getattr__(self, name):
-        return lambda *args, **kwargs: self
-
-
 class CodexBot:
     # Make decorator for HTTP callback public
     http_response = http_response
 
-    def __init__(self, application_name, host, port, db_config, token, hawk_params=None):
+    def __init__(self, application_name, host, port, rabbitmq_host, db_config, token, hawk_token=None):
         """
         Enable python error catcher for https://hawk.so
 
@@ -28,7 +23,7 @@ class CodexBot:
         >     if self.sdk.hawk:
         >         self.sdk.hawk.catch()
         """
-        self.hawk = Hawk(hawk_params) if hawk_params is not None else NoneCallable()
+        self.hawk = Hawk(hawk_token) if hawk_token is not None else None
 
         """
         Initiates SDK
@@ -54,7 +49,7 @@ class CodexBot:
         self.db = self.init_db(db_config)
         self.scheduler = self.init_scheduler()
         self.server = self.init_server()
-        self.broker = self.init_broker(application_name, queue_name, self.hawk)
+        self.broker = self.init_broker(application_name, queue_name, rabbitmq_host, self.hawk)
 
         self.broker.start()
 
@@ -64,8 +59,8 @@ class CodexBot:
     def init_server(self):
         return Server(self.event_loop, self.host, self.port)
 
-    def init_broker(self, application_name, queue_name, hawk):
-        return Broker(self, self.event_loop, application_name, queue_name, hawk)
+    def init_broker(self, application_name, queue_name, rabbitmq_host, hawk):
+        return Broker(self, self.event_loop, application_name, queue_name, rabbitmq_host, hawk)
 
     def init_db(self, db_config):
         self.logging.debug("Initialize db.")
