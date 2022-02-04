@@ -8,7 +8,7 @@ from ..lib.rabbitmq import init_receiver, add_message_to_queue, connect
 
 class Broker:
 
-    def __init__(self, core, event_loop, application_name, queue_name, rabbitmq_host, hawk):
+    def __init__(self, core, event_loop, application_name, queue_name, rabbitmq_url, hawk):
         """
         Application broker initialization
         :param core:
@@ -20,10 +20,10 @@ class Broker:
         self.core = core
         self.event_loop = event_loop
         self.queue_name = queue_name
-        self.rabbitmq_host = rabbitmq_host
+        self.rabbitmq_url = rabbitmq_url
         self.api = API(self, application_name, hawk)
 
-        self.channel = self.event_loop.run_until_complete(connect(host=rabbitmq_host))
+        self.channel = self.event_loop.run_until_complete(connect(url=rabbitmq_url))
 
     async def callback(self, message: IncomingMessage):
         try:
@@ -39,4 +39,4 @@ class Broker:
         await add_message_to_queue(message, 'core', self.channel)
 
     def start(self):
-        self.event_loop.run_until_complete(init_receiver(self.callback, self.queue_name, self.rabbitmq_host))
+        self.event_loop.run_until_complete(init_receiver(self.callback, self.queue_name, self.rabbitmq_url))

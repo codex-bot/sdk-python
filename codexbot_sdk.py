@@ -12,7 +12,7 @@ class CodexBot:
     # Make decorator for HTTP callback public
     http_response = http_response
 
-    def __init__(self, application_name, host, port, rabbitmq_host, db_config, token, hawk_token=None):
+    def __init__(self, application_name, host, port, rabbitmq_url, db_config, token, hawk_token=None):
         """
         Enable python error catcher for https://hawk.so
 
