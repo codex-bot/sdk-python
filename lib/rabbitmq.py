@@ -15,6 +15,6 @@ async def init_receiver(callback, queue_name, url='amqp://guest:guest@127.0.0.1/
     await queue.consume(callback)
 
 
-async def add_message_to_queue(data, queue_name, url='amqp://guest:guest@127.0.0.1/'):
+async def add_message_to_queue(data, queue_name, channel):
     message = aio_pika.Message(data.encode(), delivery_mode=aio_pika.DeliveryMode.PERSISTENT)
     await channel.default_exchange.publish(message, routing_key=queue_name)
