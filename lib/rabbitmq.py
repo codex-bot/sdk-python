@@ -1,14 +1,14 @@
 import aio_pika
 
 
-async def connect(host='localhost'):
-    connection = await aio_pika.connect_robust(host=host)
+async def connect(url='amqp://guest:guest@127.0.0.1/'):
+    connection = await aio_pika.connect_robust(url)
     channel = await connection.channel()
     return channel
 
 
-async def init_receiver(callback, queue_name, host='localhost'):
-    connection = await aio_pika.connect_robust(host=host)
+async def init_receiver(callback, queue_name, url='amqp://guest:guest@127.0.0.1/'):
+    connection = await aio_pika.connect_robust(url)
     channel = await connection.channel()
     await channel.set_qos(prefetch_count=1)
     queue = await channel.declare_queue(queue_name, durable=True)

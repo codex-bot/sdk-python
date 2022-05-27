@@ -12,7 +12,7 @@ class CodexBot:
     # Make decorator for HTTP callback public
     http_response = http_response
 
-    def __init__(self, application_name, host, port, rabbitmq_host, db_config, token, hawk_token=None):
+    def __init__(self, application_name, host, port, rabbitmq_url, db_config, token, hawk_token=None):
         """
         Enable python error catcher for https://hawk.so
 
@@ -49,7 +49,7 @@ class CodexBot:
         self.db = self.init_db(db_config)
         self.scheduler = self.init_scheduler()
         self.server = self.init_server()
-        self.broker = self.init_broker(application_name, queue_name, rabbitmq_host, self.hawk)
+        self.broker = self.init_broker(application_name, queue_name, rabbitmq_url, self.hawk)
 
         self.broker.start()
 
@@ -59,8 +59,8 @@ class CodexBot:
     def init_server(self):
         return Server(self.event_loop, self.host, self.port)
 
-    def init_broker(self, application_name, queue_name, rabbitmq_host, hawk):
-        return Broker(self, self.event_loop, application_name, queue_name, rabbitmq_host, hawk)
+    def init_broker(self, application_name, queue_name, rabbitmq_url, hawk):
+        return Broker(self, self.event_loop, application_name, queue_name, rabbitmq_url, hawk)
 
     def init_db(self, db_config):
         self.logging.debug("Initialize db.")
