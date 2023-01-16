@@ -85,7 +85,7 @@ logging.py          :17                  debug() 	 /cities handler fired with pa
 - `/cities` — view cities list
 - `/weather` — get current weather conditions
 
-![](https://capella.pics/3ee93508-ef47-4c61-9c2f-988e2e6d9b93)
+![](assets/demo.jpeg)
 
 ## Issues and improvements
 
